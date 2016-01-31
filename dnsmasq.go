@@ -129,10 +129,12 @@ func ParseLeases(r io.Reader) ([]Lease, error) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if l, err := ParseLease(line); err != nil {
-			return nil, errors.New("ParseLeaeses failed: " + err.Error())
-		} else {
-			ls = append(ls, l)
+		if len(line) > 0 {
+			if l, err := ParseLease(line); err != nil {
+				return nil, errors.New("ParseLeaeses failed: " + err.Error())
+			} else {
+				ls = append(ls, l)
+			}
 		}
 	}
 
