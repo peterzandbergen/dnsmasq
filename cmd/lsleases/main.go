@@ -2,8 +2,11 @@
 package main
 
 import (
+	"flag"
+
 	"github.com/peterzandbergen/dnsmasq"
 
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -16,6 +19,8 @@ var (
 		"/var/lib/misc/dnsmasq.leases",
 		"./dnsmasq.leases",
 	}
+
+	format = flag.String("format", "text", "Output format [text, json]")
 )
 
 func findFile() (io.ReadCloser, error) {
@@ -47,11 +52,27 @@ func listResult(ls []dnsmasq.Lease) {
 	}
 }
 
+func listJsonResult(ls []dnsmasq.Lease) {
+	b, err := json.MarshalIndent(ls, "  ", "  ")
+	if err != nil {
+		return
+	}
+	fmt.Println(string(b))
+}
+
 func main() {
+	var listFunc func(ls []dnsmasq.Lease) = listResult
+	flag.Parse()
+	switch (*format)[:1] {
+	case "t":
+	case "j":
+		listFunc = listJsonResult
+	}
+
 	ls, err := loadLeases()
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
 	} else {
-		listResult(ls)
+		listFunc(ls)
 	}
 }

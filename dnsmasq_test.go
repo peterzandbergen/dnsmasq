@@ -121,3 +121,18 @@ func TestParseLeases(t *testing.T) {
 		t.Errorf("Expected %d lines, parsed %d lines.", 19, len(ls))
 	}
 }
+
+func TestParseLeasesJson(t *testing.T) {
+	var ls []Lease
+	var err error
+	r := bytes.NewBufferString(dnsmasqLeases)
+	if ls, err = ParseLeases(r); err != nil {
+		t.Errorf("Error: %s", err.Error())
+	}
+	if len(ls) != 19 {
+		t.Errorf("Expected %d lines, parsed %d lines.", 19, len(ls))
+	}
+	// b, err := json.MarshalIndent(&struct{ Leases []Lease }{ls}, "  ", "  ")
+	b, err := json.MarshalIndent(ls, "  ", "  ")
+	t.Log(string(b))
+}
