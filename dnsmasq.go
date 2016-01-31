@@ -6,9 +6,16 @@ import (
 	"errors"
 	"io"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 )
+
+var locations = []string{
+	"/var/db/dnsmasq.leases",
+	"/var/lib/misc/dnsmasq.leases",
+	"./dnsmasq.leases",
+}
 
 // Type MacAddr is used to allow custom String() and Json Marshaling.
 type MacAddr net.HardwareAddr
@@ -138,5 +145,27 @@ func ParseLeases(r io.Reader) ([]Lease, error) {
 		}
 	}
 
+	return ls, nil
+}
+
+func FindFile() (io.ReadCloser, error) {
+	for _, fn := range locations {
+		if f, err := os.Open(fn); err == nil {
+			return f, nil
+		}
+	}
+	return nil, errors.New("file not found or not accessible.")
+}
+
+func LoadLeases() ([]Lease, error) {
+	r, err := FindFile()
+	if err != nil {
+		return nil, err
+	}
+	defer r.Close()
+	ls, err := ParseLeases(r)
+	if err != nil {
+		return nil, err
+	}
 	return ls, nil
 }
