@@ -2,7 +2,6 @@ package dnsmasq
 
 import (
 	"encoding/json"
-	// "fmt"
 	"net/http"
 )
 
