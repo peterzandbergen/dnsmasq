@@ -135,11 +135,12 @@ func TestParseLeasesJson(t *testing.T) {
 	}
 	// b, err := json.MarshalIndent(&struct{ Leases []Lease }{ls}, "  ", "  ")
 	b, err := json.MarshalIndent(ls, "  ", "  ")
-	t.Log(string(b))
+	_ = b
+	// t.Log(string(b))
 }
 
 func TestLeasesServer(t *testing.T) {
 	w := httptest.NewRecorder()
 	LeasesServer(w, nil)
-	t.Logf("%d - %s", w.Code, w.Body.String())
+	// t.Logf("%d - %s", w.Code, w.Body.String())
 }
