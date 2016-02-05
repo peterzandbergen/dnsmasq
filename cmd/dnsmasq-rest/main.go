@@ -5,7 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/justinas/alice"
 	"github.com/peterzandbergen/dnsmasq"
+)
+
+const (
+	TlsCertFile = "../../../../../../certs/selfsigned.myhops.com.crt"
+	TlsKeyFile  = "../../../../../../certs/selfsigned.myhops.com.key"
 )
 
 type fakeDirectory struct {
@@ -26,10 +32,10 @@ func (f *fakeDirectory) CheckCredentials(uid, pwd string) (*dnsmasq.Profile, err
 
 func main() {
 	// Start the http server.
-	http.HandleFunc("/leases", dnsmasq.LeasesServer)
+	http.Handle("/leases", alice.New(dnsmasq.JwtAuthMiddleWare()).ThenFunc(dnsmasq.LeasesServer))
 
 	fd := &fakeDirectory{}
 	authHandler := dnsmasq.NewAuthenticator(fd, []byte(dnsmasq.JwtSecret))
 	http.Handle("/authenticate", authHandler)
-	http.ListenAndServe(":8967", nil)
+	http.ListenAndServeTLS(":8967", TlsCertFile, TlsKeyFile, nil)
 }
