@@ -6,7 +6,7 @@ import (
 )
 
 // Handler for the leases.
-func LeasesServer(w http.ResponseWriter, r *http.Request) {
+func LeasesHandler(w http.ResponseWriter, r *http.Request) {
 	l, err := LoadLeases()
 
 	if err != nil {

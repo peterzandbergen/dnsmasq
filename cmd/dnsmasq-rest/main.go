@@ -32,7 +32,7 @@ func (f *fakeDirectory) CheckCredentials(uid, pwd string) (*dnsmasq.Profile, err
 
 func main() {
 	// Start the http server.
-	http.Handle("/leases", alice.New(dnsmasq.JwtAuthMiddleWare()).ThenFunc(dnsmasq.LeasesServer))
+	http.Handle("/leases", alice.New(dnsmasq.JwtAuthMiddleWare()).ThenFunc(dnsmasq.LeasesHandler))
 
 	fd := &fakeDirectory{}
 	authHandler := dnsmasq.NewAuthenticator(fd, []byte(dnsmasq.JwtSecret))
