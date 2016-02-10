@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/justinas/alice"
+	// "github.com/justinas/alice"
 )
 
 type jwtAuthHandler struct {
@@ -17,7 +17,7 @@ func NewJwtAuthHandler(h http.Handler) http.Handler {
 	}
 }
 
-func JwtAuthMiddleWare() alice.Constructor {
+func JwtAuthMiddleWare() func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return NewJwtAuthHandler(h)
 	}
